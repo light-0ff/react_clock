@@ -37,8 +37,8 @@ export default class Clock extends React.Component {
             var buff_hr = this.hours;
             this.timerr = timer(0, 1000).subscribe(number => {
                 if (number % 60 >= buff_sec) { this.seconds = number % 60; } else { this.seconds = number % 60 + buff_sec; }
-                if (Math.floor(number / 60) >= buff_min) this.minutes = Math.floor(number / 60);
-                if (Math.floor(number / (60 * 60)) >= buff_hr) this.hours = Math.floor(number / (60 * 60));
+                if (Math.floor(number / 60) >= buff_min) { this.minutes = Math.floor(number / 60) } else { this.minutes = Math.floor(number / 60) + buff_min; };
+                if (Math.floor(number / (60 * 60)) >= buff_hr) {this.hours = Math.floor(number / (60 * 60))} else { this.minutes = Math.floor(number / (60 * 60)) + buff_hr; };
             });
             this.state.timerStatus = true;
         }
@@ -55,10 +55,8 @@ export default class Clock extends React.Component {
         this.state.timerStatus = false;
     }
     reset() {
-        this.wait();
-        this.seconds = 0;
-        this.minutes = 0;
-        this.hours = 0;
+        this.state.timerStatus = true;
+        this.startCount();
         this.startCount();
     }
     render() {
