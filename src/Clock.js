@@ -20,7 +20,7 @@ export default class Clock extends React.Component {
         this.reset = this.reset.bind(this);
     }
     componentDidMount() {
-        this.startClock();
+        // this.startClock();
     }
     startClock() {
         setInterval(() => {
@@ -36,7 +36,13 @@ export default class Clock extends React.Component {
             var buff_min = this.minutes;
             var buff_hr = this.hours;
             this.timerr = timer(0, 1000).subscribe(number => {
-                number % 60 >= buff_sec ? this.seconds = number % 60 : this.seconds = number % 60 + buff_sec;
+                number % 60 > buff_sec ? this.seconds = number % 60 : this.seconds = number % 60 + buff_sec, number = buff_sec;
+                this.setState({
+                    currentTime: this.seconds
+                });
+                console.log('number:', number);
+                console.log('buffer sec:', buff_sec);
+                console.log(this.seconds);
                 Math.floor(number / 60) >= buff_min ? this.minutes = Math.floor(number / 60) : this.minutes = Math.floor(number / 60) + buff_min;
                 Math.floor(number / (60 * 60)) >= buff_hr ? this.hours = Math.floor(number / (60 * 60)) : this.minutes = Math.floor(number / (60 * 60)) + buff_hr;
             });
@@ -50,7 +56,7 @@ export default class Clock extends React.Component {
             this.hours = 0;
         }
     }
-    startCountAlt(){
+    startCountAlt() {
 
     }
     wait() {
@@ -59,6 +65,7 @@ export default class Clock extends React.Component {
     }
     reset() {
         this.timerStatus = true;
+        setTimeout(() => { console.log('stop') }, 1000)
         this.startCount();
         this.startCount();
     }
@@ -66,7 +73,7 @@ export default class Clock extends React.Component {
         return (
             <div>
                 <h2>
-                    {this.state.currentTime}
+                    {/* {this.state.currentTime} */}
                 </h2>
                 <h1>{this.hours >= 10 ? this.hours : '0' + this.hours}:
                     {this.minutes >= 10 ? this.minutes : '0' + this.minutes}:
