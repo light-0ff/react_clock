@@ -8,12 +8,12 @@ export default class Clock extends React.Component {
     minutes = 0;
     seconds = 0;
     timerr = null;
+    timerStatus = false;
 
     constructor(props) {
         super(props);
         this.state = {
             currentTime: null,
-            timerStatus: false
         }
         this.startCount = this.startCount.bind(this);
         this.wait = this.wait.bind(this);
@@ -31,31 +31,34 @@ export default class Clock extends React.Component {
         }, 1000)
     }
     startCount() {
-        if (!this.state.timerStatus) {
+        if (!this.timerStatus) {
             var buff_sec = this.seconds;
             var buff_min = this.minutes;
             var buff_hr = this.hours;
             this.timerr = timer(0, 1000).subscribe(number => {
-                if (number % 60 >= buff_sec) { this.seconds = number % 60; } else { this.seconds = number % 60 + buff_sec; }
-                if (Math.floor(number / 60) >= buff_min) { this.minutes = Math.floor(number / 60) } else { this.minutes = Math.floor(number / 60) + buff_min; };
-                if (Math.floor(number / (60 * 60)) >= buff_hr) {this.hours = Math.floor(number / (60 * 60))} else { this.minutes = Math.floor(number / (60 * 60)) + buff_hr; };
+                number % 60 >= buff_sec ? this.seconds = number % 60 : this.seconds = number % 60 + buff_sec;
+                Math.floor(number / 60) >= buff_min ? this.minutes = Math.floor(number / 60) : this.minutes = Math.floor(number / 60) + buff_min;
+                Math.floor(number / (60 * 60)) >= buff_hr ? this.hours = Math.floor(number / (60 * 60)) : this.minutes = Math.floor(number / (60 * 60)) + buff_hr;
             });
-            this.state.timerStatus = true;
+            this.timerStatus = true;
         }
         else {
             this.timerr.unsubscribe()
-            this.state.timerStatus = false;
+            this.timerStatus = false;
             this.seconds = 0;
             this.minutes = 0;
             this.hours = 0;
         }
     }
+    startCountAlt(){
+
+    }
     wait() {
         this.timerr.unsubscribe();
-        this.state.timerStatus = false;
+        this.timerStatus = false;
     }
     reset() {
-        this.state.timerStatus = true;
+        this.timerStatus = true;
         this.startCount();
         this.startCount();
     }
