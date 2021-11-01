@@ -20,15 +20,7 @@ export default class Clock extends React.Component {
         this.reset = this.reset.bind(this);
     }
     componentDidMount() {
-        // this.startClock();
-    }
-    startClock() {
-        setInterval(() => {
-            let date = new Date();
-            this.setState({
-                currentTime: (date.toLocaleString()),
-            });
-        }, 1000)
+
     }
     startCount() {
         if (!this.timerStatus) {
@@ -40,15 +32,16 @@ export default class Clock extends React.Component {
                     filter(number => {
                         console.log('sec', this.seconds)
                         console.log('buff', buff_sec)
-                        this.seconds = number % 60 +  buff_sec;
+                        this.seconds = number % 60 + buff_sec;
                         this.setState({
                             currentTime: this.seconds
                         });
                         return true;
                     }),
                     filter(number => {
-                        if (this.seconds >= 59) {
-                            this.minutes = Math.floor(number / 60) + buff_min + 1;
+                        if (this.seconds === 59) {
+                            if (this.minutes === 60) this.minutes = 0;
+                            this.minutes = Math.floor((this.seconds + 1) / 60) + buff_min;
                             console.log('min', this.minutes)
                             return true;
                         } else {
@@ -66,10 +59,6 @@ export default class Clock extends React.Component {
                 ).subscribe(() => {
 
                 });
-            ////////////////////////
-            // this.timerr = timer(0, 1000)
-            //     .pipe(map((x) => x * x))
-            //     .subscribe(number => { console.log(number) });
             this.timerStatus = true;
         }
         else {
@@ -96,9 +85,6 @@ export default class Clock extends React.Component {
     render() {
         return (
             <div>
-                <h2>
-                    {/* {this.state.currentTime} */}
-                </h2>
                 <h1>{this.hours >= 10 ? this.hours : '0' + this.hours}:
                     {this.minutes >= 10 ? this.minutes : '0' + this.minutes}:
                     {this.seconds >= 10 ? this.seconds : '0' + this.seconds}
