@@ -1,5 +1,5 @@
 import React from 'react';
-import { Observable, timer } from 'rxjs';
+import { timer, filter } from 'rxjs';
 
 
 export default class Clock extends React.Component {
@@ -35,22 +35,46 @@ export default class Clock extends React.Component {
             var buff_sec = this.seconds;
             var buff_min = this.minutes;
             var buff_hr = this.hours;
-            this.timerr = timer(0, 1000).subscribe(number => {
-                number % 60 > buff_sec ? this.seconds = number % 60 : this.seconds = number % 60 + buff_sec, number = buff_sec;
-                this.setState({
-                    currentTime: this.seconds
+            this.timerr = timer(0, 1000)
+                .pipe(
+                    filter(number => {
+                        console.log('sec', this.seconds)
+                        console.log('buff', buff_sec)
+                        this.seconds = number % 60 +  buff_sec;
+                        this.setState({
+                            currentTime: this.seconds
+                        });
+                        return true;
+                    }),
+                    filter(number => {
+                        if (this.seconds >= 59) {
+                            this.minutes = Math.floor(number / 60) + buff_min + 1;
+                            console.log('min', this.minutes)
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }),
+                    filter(number => {
+                        if (this.minutes >= 60) {
+                            console.log('hours')
+                            this.hours = buff_hr + Math.floor(number / (60 * 60));
+                        } else {
+                            return false;
+                        }
+                    })
+                ).subscribe(() => {
+
                 });
-                console.log('number:', number);
-                console.log('buffer sec:', buff_sec);
-                console.log(this.seconds);
-                Math.floor(number / 60) >= buff_min ? this.minutes = Math.floor(number / 60) : this.minutes = Math.floor(number / 60) + buff_min;
-                Math.floor(number / (60 * 60)) >= buff_hr ? this.hours = Math.floor(number / (60 * 60)) : this.minutes = Math.floor(number / (60 * 60)) + buff_hr;
-            });
+            ////////////////////////
+            // this.timerr = timer(0, 1000)
+            //     .pipe(map((x) => x * x))
+            //     .subscribe(number => { console.log(number) });
             this.timerStatus = true;
         }
         else {
-            this.timerr.unsubscribe()
             this.timerStatus = false;
+            this.timerr.unsubscribe()
             this.seconds = 0;
             this.minutes = 0;
             this.hours = 0;
@@ -60,8 +84,8 @@ export default class Clock extends React.Component {
 
     }
     wait() {
-        this.timerr.unsubscribe();
         this.timerStatus = false;
+        this.timerr.unsubscribe();
     }
     reset() {
         this.timerStatus = true;
