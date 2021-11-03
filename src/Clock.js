@@ -5,7 +5,7 @@ import { timer } from 'rxjs';
 export default class Clock extends React.Component {
 
     hours = 0;
-    minutes = 0;
+    minutes = 59;
     seconds = 0;
     timerr = null;
     timerStatus = false;
@@ -20,7 +20,7 @@ export default class Clock extends React.Component {
         this.reset = this.reset.bind(this);
     }
     componentDidMount() {
-        this.startClock();
+        // this.startClock();
 
     }
     startClock() {
@@ -37,9 +37,13 @@ export default class Clock extends React.Component {
             var buff_min = this.minutes;
             var buff_hr = this.hours;
             this.timerr = timer(0, 1000).subscribe(number => {
-                this.seconds = number % 60 + buff_sec;
-                this.minutes = buff_min + Math.floor(number / 60);
-                this.hours = buff_hr + Math.floor(number / (60 * 60));
+                this.setState({
+                    currentTime: number,
+                });
+                console.log(number);
+                this.seconds = (number + 1 + buff_sec) % 60;
+                this.minutes = buff_min + Math.floor((this.seconds) / 60);
+                this.hours = buff_hr + Math.floor(this.minutes / 60);
             });
             this.timerStatus = true;
         }
@@ -64,7 +68,7 @@ export default class Clock extends React.Component {
         return (
             <div>
                 <h2>
-                    {this.state.currentTime}
+                    {/* {this.state.currentTime} */}
                 </h2>
                 <h1>
                     {this.hours >= 10 ? this.hours : '0' + this.hours}:
