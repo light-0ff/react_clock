@@ -30,28 +30,28 @@ export default class Clock extends React.Component {
             this.timerr = timer(0, 1000)
                 .pipe(
                     filter(number => {
-                        console.log('sec', this.seconds)
-                        console.log('buff', buff_sec)
-                        this.seconds = number % 60 + buff_sec;
+                        this.seconds = (number + 1 + buff_sec) % 60;
                         this.setState({
                             currentTime: this.seconds
                         });
                         return true;
                     }),
-                    filter(number => {
-                        if (this.seconds === 59) {
-                            if (this.minutes === 60) this.minutes = 0;
-                            this.minutes = Math.floor((this.seconds + 1) / 60) + buff_min;
-                            console.log('min', this.minutes)
+                    filter(() => {
+                        if (this.seconds >= 59) {
+                                this.minutes = this.minutes + 1 + buff_min;
+                                buff_min = 0;
                             return true;
                         } else {
                             return false;
                         }
                     }),
-                    filter(number => {
-                        if (this.minutes >= 60) {
-                            console.log('hours')
-                            this.hours = buff_hr + Math.floor(number / (60 * 60));
+                    filter(() => {
+                        if (this.minutes >= 59) {
+                            this.hours = this.hours + 1 + buff_hr;
+                            buff_hr = 0;
+                            buff_min = 0; // minutes buffer reset
+                            this.minutes = 0; // minutes reset
+                            return true;
                         } else {
                             return false;
                         }
